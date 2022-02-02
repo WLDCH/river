@@ -191,7 +191,7 @@ class HalfSpaceTrees(AnomalyDetector):
         n_trees=10,
         height=8,
         window_size=250,
-        reset_drift = False
+        reset_drift = False,
         limits: typing.Dict[base.typing.FeatureName, typing.Tuple[float, float]] = None,
         seed: int = None,
     ):
