@@ -7,7 +7,7 @@ from river import base
 from river.tree.base import Branch, Leaf
 
 from .base import AnomalyDetector
-from river.drift import ADWIN
+from river.drift import adwin
 
 __all__ = ["HalfSpaceTrees"]
 
