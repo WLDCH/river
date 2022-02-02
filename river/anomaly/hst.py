@@ -7,6 +7,7 @@ from river import base
 from river.tree.base import Branch, Leaf
 
 from .base import AnomalyDetector
+from river.drift import ADWIN
 
 __all__ = ["HalfSpaceTrees"]
 
@@ -190,6 +191,7 @@ class HalfSpaceTrees(AnomalyDetector):
         n_trees=10,
         height=8,
         window_size=250,
+        reset_drift = False
         limits: typing.Dict[base.typing.FeatureName, typing.Tuple[float, float]] = None,
         seed: int = None,
     ):
@@ -206,6 +208,8 @@ class HalfSpaceTrees(AnomalyDetector):
         self.trees = []
         self.counter = 0
         self._first_window = True
+        self.adwin = Adwin()
+        self.reset_drift = reset_drift
 
     @property
     def size_limit(self):
@@ -245,14 +249,25 @@ class HalfSpaceTrees(AnomalyDetector):
 
         # Pivot the masses if necessary
         self.counter += 1
-        if self.counter == self.window_size:
-            for tree in self.trees:
-                for node in tree.iter_dfs():
-                    node.r_mass = node.l_mass
-                    node.l_mass = 0
-            self._first_window = False
-            self.counter = 0
-
+        
+        if self.drift_rest == False:
+            if self.counter == self.window_size:
+                for tree in self.trees:
+                    for node in tree.iter_dfs():
+                        node.r_mass = node.l_mass
+                        node.l_mass = 0
+                self._first_window = False
+                self.counter = 0
+        else:
+            in_drift, in_warning = adwin.update(x)
+            if self.counter == self.window_size or in_drift:
+                for tree in self.trees:
+                    for node in tree.iter_dfs():
+                        node.r_mass = node.l_mass
+                        node.l_mass = 0
+                self._first_window = False
+                self.counter = 0
+                
         return self
 
     def score_one(self, x):
