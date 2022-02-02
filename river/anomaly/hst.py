@@ -250,7 +250,7 @@ class HalfSpaceTrees(AnomalyDetector):
         # Pivot the masses if necessary
         self.counter += 1
         
-        if self.drift_rest == False:
+        if self.reset_drift == False:
             if self.counter == self.window_size:
                 for tree in self.trees:
                     for node in tree.iter_dfs():
