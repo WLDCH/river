@@ -208,7 +208,7 @@ class HalfSpaceTrees(AnomalyDetector):
         self.trees = []
         self.counter = 0
         self._first_window = True
-        self.adwin = Adwin()
+        self.adwin = ADWIN()
         self.reset_drift = reset_drift
 
     @property
