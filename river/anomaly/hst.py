@@ -259,11 +259,13 @@ class HalfSpaceTrees(AnomalyDetector):
                 self._first_window = False
                 self.counter = 0
         else:
-            in_drift_final = False
+            drift = False
             for i in x.values():
                 in_drift, in_warning = self.adwin.update(i)
-                in_drift_final = in_drift_final | in_drift
-            if self.counter == self.window_size or in_drift_final:
+#                 drift = drift | in_drift
+                if adwin.change_detected:
+                    drift = True
+            if self.counter == self.window_size or drift:
 #             if in_drift_final:
                 for tree in self.trees:
                     for node in tree.iter_dfs():
